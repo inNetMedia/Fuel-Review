@@ -1,34 +1,39 @@
 const btnFill = document.getElementById("btnFill"),
-errorMessage = document.getElementById('error-message');
+    pumpSpeed = document.getElementsByName('pump-speed-select'),
+    errorMessage = document.getElementById('error-message'),
     btnReset = document.getElementById("btnReset");
+
 let fuelPrice = document.getElementById("fuel-price"),
     moneyPaid = document.getElementById("money-paid"),
-    fuelPumped = document.getElementById("fuel-pumped");
-let money = 0.0,
-    liters = 0.0;
+    fuelPumped = document.getElementById("fuel-pumped"),
+    money = 0.0,
+    liters = 0.0,
+    interval2 = 0.2391,
+    pump_speed = 90;
 
 
 
 
 
-btnFill.addEventListener("mousedown",fillTank);
-btnFill.addEventListener("touchstart",fillTank);
+
+
+btnFill.addEventListener("mousedown",fillTank)
+btnFill.addEventListener("touchstart",fillTank)
+btnReset.addEventListener("click",resetPump)
+
+//Resets value 
 function resetPump(){
     money = 0.0;
     liters = 0.0;
     moneyPaid.textContent = `R ${money}.00`;
     fuelPumped.textContent = `${liters}.00 L`;
 }
-btnReset.addEventListener("click",resetPump);
 
-const pumpSpeed = document.getElementsByName('pump-speed-select');
-let pump_speed = 90;
-pumpSpeed.forEach(function(element,index,array){
-    element.addEventListener('change',() => {
-        pump_speed = element.value;
+pumpSpeed.forEach(function(element){
+    element.addEventListener('change', () => {
+        pump_speed = element.value
     })
 })
-let interval2 = 0.2391;
 function fillTank(){
     let timer = setInterval(fillAnime,pump_speed);
     btnFill.addEventListener("mouseup",() => {
@@ -48,75 +53,37 @@ function fillTank(){
 
 //Cookie Banner pop up
 
-const cContainer = document.createElement("div"),
-cInstruction = document.createElement("span"),
-cbtnContainer = document.createElement("div"),
-cookieDesc = document.createElement("p"),
-policy = document.createElement("a");
-btnAcceptCookies = document.createElement("button"),
-btnRejectCookies = document.createElement("button");
 
+const cookieContainer = document.createElement("div")
 const cookieTimer = setTimeout(() => {
-    policy.textContent = "Cookie Policy";
-    btnRejectCookies.textContent = "Reject All";
-    btnAcceptCookies.textContent = "Accept";
-    btnRejectCookies.classList.add("btnRejectCookies");
-    btnAcceptCookies.classList.add("btnAcceptCookies");
-    
-    document.body.appendChild(cContainer);
-    cookieDesc.textContent = `We use cookies that are strictly necessary for this website to function as well as for advertising purposes. Please refer to our ${policy.textContent}🍪`;
-    cContainer.append(cookieDesc);
-    cInstruction.textContent = "Do you consent to us using cookies on your device";
-    cContainer.append(cInstruction);
-    cbtnContainer.append(btnAcceptCookies);
-    cbtnContainer.append(btnRejectCookies);
-    cContainer.append(cbtnContainer);
-
-    cContainer.classList.add("cookie-container");
-    
-    cbtnContainer.classList.add("cookiebtn-container");
+    cookieContainer.classList.add('cookie-container')
+    cookieContainer.innerHTML = `
+        <span class="message">We use cookies that are strictly necessary for this website to function as well as for advertising purposes. Please refer to our <a href="">Cookie Policy</a>🍪</span>
+        <span class="instruction">Do you consent to us using cookies on your device</span>
+        <div class="cookiebtn-container">
+            <button class="btnRejectCookies">Reject All</button>
+            <button class="btnAcceptCookies">Accept</button>
+        </div>
+    `
 }, 8000);
 
 if(localStorage.getItem('adCookie') == 'ws2s125'){
     clearTimeout(cookieTimer);
 }
 
-btnAcceptCookies.addEventListener("click",() => {
-    localStorage.setItem('adCookie','ws2s125');
-    console.log(localStorage.getItem('adCookie'));
-    document.body.removeChild(cContainer);
-})
-btnRejectCookies.addEventListener('click', () => {
-    localStorage.setItem('adCookie','ws2s125');
-    console.log(localStorage.getItem('adCookie'));
-    document.body.removeChild(cContainer);
-})
+//CookieHandler
+btnAcceptCookies.addEventListener("click", setCookie)
+btnRejectCookies.addEventListener('click', setCookie)
 
+function setCookie() {
+    localStorage.setItem('adCookie','ws2s125');
+    document.body.removeChild(cookieContainer);
+}
 
 
 //Maps Stuff
-//AIzaSyBqmN2f2jPHib3u4QbS7yKYluJOx6Ffn5k
-async function calculateDistance() {
-    console.log('calling the distance function');
-    const origin = document.getElementById('from-location').value;
-    const destination = document.getElementById('to-location').value;
-    const apiKey = 'AIzaSyBqmN2f2jPHib3u4QbS7yKYluJOx6Ffn5k';
-
-    const response = await fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`);
-    const data = await response.json();
-
-    if (data.status === 'OK') {
-        const element = data.rows[0].elements[0];
-        if (element.status === 'OK') {
-            const distance = element.distance.text;
-            const duration = element.duration.text;
-            console.log(`Distance: ${distance}, Duration: ${duration}`);
-        } else {
-            console.log('Error calculating distance');
-        }
-    } else {
-        console.log('Error fetching data from API');
-    }
+const calculateDistance = async () => {
+    //Post request to server
 }
 document.getElementById('btnSearch').addEventListener('click', calculateDistance);
 
